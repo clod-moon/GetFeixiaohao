@@ -23,7 +23,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 	var list []Market
 
-	rows,err:=DB.Debug().Find(&list).Rows()
+	rows,err:=DB.Find(&list).Rows()
 
 	if err != nil{
 		w.Write([]byte(err.Error()))
@@ -33,7 +33,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var m Market
 		rows.Scan(&m.Id,&m.Name,&m.Price,&m.Rose)
-		fmt.Println(m)
 	}
 	feixiaoData.Code = 200
 	feixiaoData.Msg = "success"
@@ -50,7 +49,8 @@ func HttpServer(){
 	http.HandleFunc("/", index)
 
 	// 启动web服务，监听9090端口
-	err := http.ListenAndServe(":9089", nil)
+
+	err := http.ListenAndServe(fmt.Sprintf(":%d",httpSreverPort), nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

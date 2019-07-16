@@ -18,7 +18,7 @@ func UpdateDB(body *[]byte) {
 		v.Id = i + 1
 		DB.Where(&Market{Id: v.Id}).First(&market)
 		//DB.Where(&v).First(&market)
-		fmt.Println("market:", market.Name)
+		//fmt.Println("market:", market.Name)
 		if len(market.Name) == 0 {
 			v.CreateTime = time.Now()
 			v.UpdateTime = time.Now()
@@ -41,12 +41,10 @@ func connHandler(c net.Conn) {
 
 		var feixiaoData FeixiaoData
 
-		body := getMarket("100")
+		body := getMarket(biAmount)
+		json.Unmarshal(body,&feixiaoData)
 
-		UpdateDB(&body)
-
-		ret, _ := json.Marshal(feixiaoData)
-
+		ret ,_:=json.Marshal(feixiaoData)
 		_, err := c.Write(ret)
 		if err != nil {
 			break
@@ -88,7 +86,7 @@ func connHandler(c net.Conn) {
 //开启serverSocket
 func ServerSocket() {
 	//1.监听端口
-	server, err := net.Listen("tcp", ":8087")
+	server, err := net.Listen("tcp", fmt.Sprintf(":%d",tcpSreverPort))
 
 	if err != nil {
 		fmt.Println("开启socket服务失败")
@@ -109,5 +107,14 @@ func ServerSocket() {
 	}
 
 	wg.Done()
+
+}
+
+func UpdateMarket(){
+	for{
+		body := getMarket(biAmount)
+		UpdateDB(&body)
+		time.Sleep(time.Second*updatePreSecond)
+	}
 
 }
