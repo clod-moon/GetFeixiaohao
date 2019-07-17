@@ -116,5 +116,5 @@ func UpdateMarket(){
 		UpdateDB(&body)
 		time.Sleep(time.Second*updatePreSecond)
 	}
-
+	wg.Done()
 }

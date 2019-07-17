@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"log"
+	"strconv"
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -14,8 +15,10 @@ func index(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type") //header的类型
 	w.Header().Set("content-type", "application/json")             //返回数据格式是json
 
-	//rQuery := r.URL.Query()
-	//body := getMarket(rQuery["get-size"][0])
+	rQuery := r.URL.Query()
+	//body := getMarket()
+
+	number,err := strconv.Atoi(rQuery["get-size"][0])
 
 	var feixiaoData FeixiaoData
 
@@ -36,7 +39,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 	feixiaoData.Code = 200
 	feixiaoData.Msg = "success"
-	feixiaoData.Data = append(feixiaoData.Data,list...)
+	feixiaoData.Data = list[0:number-1]
 	//json.Unmarshal(body, &feixiaoData)
 
 	ret, _ := json.Marshal(feixiaoData)
